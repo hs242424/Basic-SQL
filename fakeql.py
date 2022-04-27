@@ -1,15 +1,23 @@
 import re
-from tkinter import HIDDEN
 
 def SELECT(statement):
-    x = re.findall("FROM [^ ]+", statement)[0].strip('FROM ').strip("'").strip('"')
-    
-    if len(x) == 0:
-        raise ValueError("You must enter a file path")
-    try:
-        file = open(x)
-    except:
-        raise FileNotFoundError(f"Could not find \"{x}\"")
+    listPos = 0
+    columns = []
+    x = re.findall("[^ ]+", statement)
+    while True:
+        if listPos == 0 and x[listPos] == 'FROM':
+            raise ValueError("Must specify columns")
+        elif x[listPos] == "*" and listPos == 0:
+            columns = "All"
+            listPos += 1
+        elif x[listPos] == "FROM":
+            listPos += 1
+            break
+        else:
+            columns.append(x[listPos])
+            listPos += 1
+    print(columns)
+
 
     
     
