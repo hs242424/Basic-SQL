@@ -17,17 +17,18 @@ def SELECT(statement):
             columns.append(x[listPos])
             listPos += 1
     print(columns)
-    re.search
 
 
+def toList(file):
+    file = open(file=file)
+    temp = []
+    for line in file:
+        temp.append([i.strip('"') for i in re.findall('[^",]+|".+"', line.strip("\n"))])
+    return temp
     
-    
+toList("data.csv")
 
 def APPEND(statement):
     print(statement)
 
-def search():
-    print("Yes")
 
-def __search():
-    pass
