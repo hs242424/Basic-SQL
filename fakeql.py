@@ -17,6 +17,7 @@ def SELECT(statement):
             columns.append(x[listPos])
             listPos += 1
     print(columns)
+    re.search
 
 
     
