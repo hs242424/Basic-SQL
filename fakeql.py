@@ -12,11 +12,16 @@ def SELECT(statement):
             listPos += 1
         elif x[listPos] == "FROM":
             listPos += 1
+            filePath = x[listPos]
             break
         else:
             columns.append(x[listPos])
             listPos += 1
     print(columns)
+    data = toList(filePath)
+    for i in data:
+        print(i)
+    
 
 
 def toList(file):
@@ -26,7 +31,7 @@ def toList(file):
         temp.append([i.strip('"') for i in re.findall('[^",]+|".+"', line.strip("\n"))])
     return temp
     
-toList("data.csv")
+
 
 def APPEND(statement):
     print(statement)
