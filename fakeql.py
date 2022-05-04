@@ -1,3 +1,4 @@
+from itertools import count
 import re
 
 def SELECT(statement):
@@ -19,8 +20,7 @@ def SELECT(statement):
             listPos += 1
     print(columns)
     data = toList(filePath)
-    for i in data:
-        print(i)
+    returnColumns(columns, data)
     
 
 
@@ -31,6 +31,10 @@ def toList(file):
         temp.append([i.strip('"') for i in re.findall('[^",]+|".+"', line.strip("\n"))])
     return temp
     
+def returnColumns(columns, data):
+    if columns == "All":
+        for i in data[1::]:
+            print(i)
 
 
 def APPEND(statement):
