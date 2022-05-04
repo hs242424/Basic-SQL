@@ -1,4 +1,3 @@
-from itertools import count
 import re
 
 def SELECT(statement):
@@ -22,8 +21,7 @@ def SELECT(statement):
     print(columns)
     data = toList(file=filePath)
     columnNums = [nameToColumn(data, i) for i in columns]
-    
-
+    print(columnNums)
 
 def toList(file):
     file = open(file=file)
