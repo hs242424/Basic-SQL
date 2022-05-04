@@ -4,7 +4,8 @@ import re
 def SELECT(statement):
     listPos = 0
     columns = []
-    x = re.findall("[^ ]+", statement)
+    x = re.findall('[^, ]+|".+"', statement)
+    x = [i.strip('"') for i in x]
     while True:
         if listPos == 0 and x[listPos] == 'FROM':
             raise ValueError("Must specify columns")
@@ -19,8 +20,8 @@ def SELECT(statement):
             columns.append(x[listPos])
             listPos += 1
     print(columns)
-    data = toList(filePath)
-    returnColumns(columns, data)
+    data = toList(file=filePath)
+    columnNums = [nameToColumn(data, i) for i in columns]
     
 
 
@@ -30,14 +31,18 @@ def toList(file):
     for line in file:
         temp.append([i.strip('"') for i in re.findall('[^",]+|".+"', line.strip("\n"))])
     return temp
-    
-def returnColumns(columns, data):
-    if columns == "All":
-        for i in data[1::]:
-            print(i)
+
+
+def nameToColumn(data, name):
+    for i in data[0]:
+        if i.lower() == name.lower():
+            return data[0].index(i)
+    raise AttributeError(f"{name} is not a valid column")
+
 
 
 def APPEND(statement):
     print(statement)
+
 
 
