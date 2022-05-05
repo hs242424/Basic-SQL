@@ -16,6 +16,7 @@ def SELECT(statement):
         elif inputString[listPos] == "FROM":
             listPos += 1
             filePath = inputString[listPos]
+            listPos += 1
             break
         else:
             columns.append(inputString[listPos])
@@ -30,9 +31,17 @@ def SELECT(statement):
     
     if inputString[listPos] == inputString[-1]:
         return returnData(data, columnNums)
-
+    
     if inputString[listPos].lower() == "where":
-        pass
+        conditions = []
+        listPos += 1
+        while True:
+            try:
+                conditions.append([inputString[listPos+i] for i in range(3)])
+                listPos += 3
+            except:
+                break
+        print(conditions)
 
     
 def returnData(data, columns):
