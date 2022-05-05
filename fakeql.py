@@ -41,6 +41,3 @@ def nameToColumn(data, name):
 
 def APPEND(statement):
     print(statement)
-
-
-
