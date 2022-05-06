@@ -41,6 +41,8 @@ def SELECT(statement):
                 listPos += 3
             except:
                 break
+            if inputString[listPos].lower() == 'and':
+                conditions.append()
         print(conditions)
 
     
