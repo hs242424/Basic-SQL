@@ -4,8 +4,8 @@ def SELECT(statement):
     listPos = 0
     columns = []
     
-    inputString = re.findall('[^, ]+|".+"', statement)
-    inputString = [i.strip('"') for i in inputString]
+    inputString = re.findall('\[[^\]]*\]|[^, ]+|".+"', statement)
+    inputString = [i.strip('"').strip("[").strip("]") for i in inputString]
     
     while True:
         if listPos == 0 and inputString[listPos] == 'FROM':
@@ -36,14 +36,14 @@ def SELECT(statement):
         conditions = []
         listPos += 1
         while True:
-            try:
-                conditions.append([inputString[listPos+i] for i in range(3)])
-                listPos += 3
-            except:
-                break
-            if inputString[listPos].lower() == 'and':
-                conditions.append()
-        print(conditions)
+            brokenCondition = re.findall('[^ <>!=]+|".+"| [=<>!]+ ', inputString[listPos])
+            brokenCondition = [i.strip(" ") for i in brokenCondition]
+            print(brokenCondition)
+            break
+        data2 = compare(data, nameToColumn(data, brokenCondition[0]), brokenCondition[2], brokenCondition[1])
+        return returnData(data2, columnNums)
+
+        
 
     
 def returnData(data, columns):
@@ -67,6 +67,21 @@ def nameToColumn(data, name):
             return data[0].index(i)
     raise AttributeError(f"{name} is not a valid column")
 
+def compare(data, columnNum, val, comparitor):
+    temp = []
+    if comparitor == "=":
+        for i in data:
+            if i[columnNum].lower() == val.lower():
+                temp.append(i)
+        return temp       
+    elif comparitor == ">":
+        pass
+    elif comparitor == "<":
+        pass
+    elif comparitor == "!=":
+        pass
+    else:
+        raise AttributeError
 
 def APPEND(statement):
     print(statement)
