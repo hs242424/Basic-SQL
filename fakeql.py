@@ -1,14 +1,37 @@
 import re
+from tracemalloc import start, stop
 
+
+'''
+Select is the primary function and is one of the two functions intended to be used by the user
+The statement that is intended to be inputed into the functions is as follows
+
+Note Well: in an argument in you statement has spaces surround it in double quotes
+
+'column1, column2 FROM filepath WHERE column operator value'
+
+Before the FROM you can put * for all of the columns of list the columns you want returned separated with a comma
+
+replace file path with the path to your csv file. You may need to use two back slashes
+remeber that if your filepath has a space in it you must surround it with quotes
+
+the where is optional if you want conditional statements
+the format of condition statements is column, operator such as =, <, >, !=, and then a value
+
+If you want multiple conditions you can separate them with an and
+'''
 def SELECT(statement):
-    listPos = 0
-    columns = []
+    listPos = 0                                                                                     # A variable that increases as the program works through the words in the statement
+    columns = []                                                                                    # Keeps track of the columns that the user wants returned
     
-    inputString = re.findall('\[[^\]]*\]|[^, ]+|".+"', statement)
-    inputString = [i.strip('"').strip("[").strip("]") for i in inputString]
+    inputString = re.findall('[^, ]+|".+"', statement)                                              # Splits the statement into parts
+    inputString = [i.strip('"') for i in inputString]                                               # Strips the " from the statements
     
+    '''
+    This loop goes through the first part of the statement, serching for the columns that should be returned
+    '''
     while True:
-        if listPos == 0 and inputString[listPos] == 'FROM':
+        if listPos == 0 and inputString[listPos] == 'FROM':                                         # Returns an error if the user does not specify columns
             raise ValueError("Must specify columns")
         elif inputString[listPos] == "*" and listPos == 0:
             columns = "All"
@@ -29,18 +52,22 @@ def SELECT(statement):
     else:
         columnNums = [i for i in range(len(data[0]))]
     
-    if inputString[listPos] == inputString[-1]:
-        return returnData(data, columnNums)
+    if listPos >= len(inputString) :
+        return returnData(data[1:], columnNums)
     
     if inputString[listPos].lower() == "where":
-        conditions = []
+        data2 = data[1:]
         listPos += 1
         while True:
-            brokenCondition = re.findall('[^ <>!=]+|".+"| [=<>!]+ ', inputString[listPos])
-            brokenCondition = [i.strip(" ") for i in brokenCondition]
-            print(brokenCondition)
-            break
-        data2 = compare(data, nameToColumn(data, brokenCondition[0]), brokenCondition[2], brokenCondition[1])
+            try:
+                brokenCondition = [inputString[i] for i in range(listPos, listPos+3)]
+                data2 = compare(data2, nameToColumn(data, brokenCondition[0]), brokenCondition[2], brokenCondition[1])
+                listPos += 4
+                if listPos > len(inputString):
+                    break
+            except:
+                raise AttributeError("Your comparisons are incorrect")
+            
         return returnData(data2, columnNums)
 
         
@@ -48,8 +75,11 @@ def SELECT(statement):
     
 def returnData(data, columns):
     temp = []
-    for i in data[1:]:
-        temp.append([i[j] for j in columns])
+    for i in data:
+        try:
+            temp.append([i[j] for j in columns])
+        except:
+            pass
     return temp
 
 
@@ -57,7 +87,7 @@ def toList(file):
     file = open(file=file)
     temp = []
     for line in file:
-        temp.append([i.strip('"') for i in re.findall('[^",]+|".+"', line.strip("\n"))])
+        temp.append([i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)])
     return temp
 
 
@@ -75,11 +105,25 @@ def compare(data, columnNum, val, comparitor):
                 temp.append(i)
         return temp       
     elif comparitor == ">":
-        pass
+        for i in data:
+            try:
+                if int(i[columnNum]) > int(val):
+                    temp.append(i)
+            except:
+                raise AttributeError('Either your condition or a value in the data can be converted to an int')
+        return temp
     elif comparitor == "<":
-        pass
+        for i in data:
+            try:
+                if int(i[columnNum]) < int(val):
+                    temp.append(i)
+            except:
+                raise AttributeError('Either your condition or a value in the data can be converted to an int')
     elif comparitor == "!=":
-        pass
+        for i in data:
+            if i[columnNum].lower() != val.lower():
+                temp.append(i)
+        return temp  
     else:
         raise AttributeError
 
