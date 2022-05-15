@@ -1,5 +1,4 @@
 import re
-from tracemalloc import start, stop
 
 
 '''
@@ -33,27 +32,29 @@ def SELECT(statement):
     while True:
         if listPos == 0 and inputString[listPos] == 'FROM':                                         # Returns an error if the user does not specify columns
             raise ValueError("Must specify columns")
-        elif inputString[listPos] == "*" and listPos == 0:
+        elif inputString[listPos] == "*" and listPos == 0:                                          # Checks if the user enter * for columns
             columns = "All"
             listPos += 1
-        elif inputString[listPos] == "FROM":
+        elif inputString[listPos] == "FROM":                                                        # Checks for the end of the list of columns
             listPos += 1
-            filePath = inputString[listPos]
+            filePath = inputString[listPos]                                                         # Locates the filename because it should be directly after the FROM
             listPos += 1
             break
         else:
-            columns.append(inputString[listPos])
+            columns.append(inputString[listPos])                                                    # Adds the colum the user wants to the list of columns  
             listPos += 1
     
-    data = toList(file=filePath)
-    
-    if columns != "All":
+    data = toList(file=filePath)                                                                    # converts the data to list of lists
+    '''
+    If the user doesn't want all of the columns the program finds the list index of the columns they want
+    '''
+    if columns != "All": 
         columnNums = [nameToColumn(data, i) for i in columns]
-    else:
+    else:                                                                                           # If the user does want all of the columns the program create a list that has the index of every column
         columnNums = [i for i in range(len(data[0]))]
     
-    if listPos >= len(inputString) :
-        return returnData(data[1:], columnNums)
+    if listPos >= len(inputString):                                                                 # checks if the user has conditions and if not returns the data from the requested columns
+        return returnData(data[1:], columnNums)                                                     # Uses a function to find all data from the request columns
     
     if inputString[listPos].lower() == "where":
         data2 = data[1:]
@@ -129,3 +130,9 @@ def compare(data, columnNum, val, comparitor):
 
 def APPEND(statement):
     print(statement)
+
+def DELETE():
+    pass
+
+def UPDATE():
+    pass
