@@ -193,4 +193,6 @@ def UPDATE(statement):
                 temp += ","+j
         temp = temp[1:] +'\n'
         temp2+=temp
-    print(temp2)
+    file = open(inputString[2], 'w')
+    file.write(temp2)
+    file.close
