@@ -183,5 +183,14 @@ def UPDATE(statement):
     line = int(inputString[0])
     column = nameToColumn(data, inputString[1])
     data[line][column] = inputString[3]
-    for i in range(10):
-        print(data[i])
+    temp2 = ""
+    for i in data:
+        temp = ""
+        for j in i:
+            if " " in j:
+                temp += ',"'+j+'"'
+            else:
+                temp += ","+j
+        temp = temp[1:] +'\n'
+        temp2+=temp
+    print(temp2)
