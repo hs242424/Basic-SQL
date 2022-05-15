@@ -5,7 +5,6 @@ Version: 1.0
 Discription: A primitive recreation of SQL intended to be used with csv files
 '''
 
-from itertools import count
 import re
 
 
@@ -94,12 +93,15 @@ def returnData(data, columns):
     return temp
 
 
-def toList(file):
+def toList(file,columnNums=True):
     file = open(file=file)
     temp = []
     counter = 0
     for line in file:
-        x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)] + [counter]
+        if columnNums:
+            x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)] + [str(counter)]
+        else:
+            x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)]
         temp.append(x)
         counter += 1
     file.close()
@@ -108,7 +110,6 @@ def toList(file):
 
 def nameToColumn(data, name):
     for i in data[0]:
-        print(data[0])
         if i.lower() == name.lower():
             return data[0].index(i)
     raise AttributeError(f"{name} is not a valid column")
@@ -171,5 +172,16 @@ def APPEND(statement):
 def DELETE():
     pass
 
-def UPDATE():
-    pass
+'''
+Input format:
+line, column, filepath, value
+'''
+def UPDATE(statement):
+    inputString = re.findall('[^," ]+|".+"', statement)                                              # Splits the statement into parts
+    inputString = [i.strip('"') for i in inputString]
+    data = toList(inputString[2], columnNums=False)
+    line = int(inputString[0])
+    column = nameToColumn(data, inputString[1])
+    data[line][column] = inputString[3]
+    for i in range(10):
+        print(data[i])
