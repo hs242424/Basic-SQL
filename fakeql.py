@@ -1,3 +1,11 @@
+'''
+Header:
+Author: Harrison Servedio
+Version: 1.0
+Discription: A primitive recreation of SQL intended to be used with csv files
+'''
+
+from itertools import count
 import re
 
 
@@ -18,6 +26,8 @@ the where is optional if you want conditional statements
 the format of condition statements is column, operator such as =, <, >, !=, and then a value
 
 If you want multiple conditions you can separate them with an and
+
+It also returns a line number to easily edit the files
 '''
 def SELECT(statement):
     listPos = 0                                                                                     # A variable that increases as the program works through the words in the statement
@@ -78,7 +88,7 @@ def returnData(data, columns):
     temp = []
     for i in data:
         try:
-            temp.append([i[j] for j in columns])
+            temp.append([i[j] for j in columns] + [i[-1]])
         except:
             pass
     return temp
@@ -87,13 +97,18 @@ def returnData(data, columns):
 def toList(file):
     file = open(file=file)
     temp = []
+    counter = 0
     for line in file:
-        temp.append([i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)])
+        x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)] + [counter]
+        temp.append(x)
+        counter += 1
+    file.close()
     return temp
 
 
 def nameToColumn(data, name):
     for i in data[0]:
+        print(data[0])
         if i.lower() == name.lower():
             return data[0].index(i)
     raise AttributeError(f"{name} is not a valid column")
@@ -128,8 +143,30 @@ def compare(data, columnNum, val, comparitor):
     else:
         raise AttributeError
 
+
+'''
+Append adds information to the end of a file
+Input format:
+filename, column1value, column2, value and so on
+
+If the value for a column contains spaces you must surround it in double quotes
+
+'''
 def APPEND(statement):
-    print(statement)
+    inputString = re.findall('[^," ]+|".+"', statement)                                              # Splits the statement into parts
+    inputString = [i.strip('"') for i in inputString]
+    file = open(inputString[0], 'a')
+    temp = ""
+    for i in inputString[1:]:
+        if " " in i:
+            temp += ',"'+i+'"'
+        else:
+            temp += ","+i
+    temp = temp[1:] +'\n'
+    file.write(temp)
+    file.close()
+
+
 
 def DELETE():
     pass
