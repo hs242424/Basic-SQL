@@ -22,7 +22,7 @@ replace file path with the path to your csv file. You may need to use two back s
 remeber that if your filepath has a space in it you must surround it with quotes
 
 the where is optional if you want conditional statements
-the format of condition statements is column, operator such as =, <, >, !=, and then a value
+the format of condition statements is column, operator such as =, <, >, !=, and then a value and second condition
 
 If you want multiple conditions you can separate them with an and
 
@@ -65,11 +65,12 @@ def SELECT(statement):
     if listPos >= len(inputString):                                                                 # checks if the user has conditions and if not returns the data from the requested columns
         return returnData(data[1:], columnNums)                                                     # Uses a function to find all data from the request columns
     
-    if inputString[listPos].lower() == "where":
-        data2 = data[1:]
+    if inputString[listPos].lower() == "where":                                                     # If the user has ented conditions it begins evaluating them
+        data2 = data[1:]                                                                            # Removes the column names from the data
         listPos += 1
-        while True:
-            try:
+        while True:                                                                                 # Repeastes until all condition have been evaluated
+            try:                                                                                    # The try except is used to inform the user if they have entered incorrect data
+                # This next block of code finds the conditions and then evalutes them
                 brokenCondition = [inputString[i] for i in range(listPos, listPos+3)]
                 data2 = compare(data2, nameToColumn(data, brokenCondition[0]), brokenCondition[2], brokenCondition[1])
                 listPos += 4
@@ -78,28 +79,35 @@ def SELECT(statement):
             except:
                 raise AttributeError("Your comparisons are incorrect")
             
-        return returnData(data2, columnNums)
+        return returnData(data2, columnNums)                                                        # Return the final data
 
         
 
-    
+'''
+This function takes a list of lists and a lists of column numbers and returns only the columns specified in the list of column numbers
+'''
 def returnData(data, columns):
     temp = []
     for i in data:
-        try:
-            temp.append([i[j] for j in columns] + [i[-1]])
+        try:                                                                                        # The try is used so that if the column does exist an error is not raised
+            temp.append([i[j] for j in columns] + [i[-1]])                                          # This part iterates through each column in a specif line and returns the column if it is in the list of columns
         except:
             pass
     return temp
 
-
+'''
+This function converts a csv to a list of lists
+file is the filepath
+columnNums specifies if the number of the column should be appened to the list items
+'''
 def toList(file,columnNums=True):
-    file = open(file=file)
+    file = open(file=file)                                                                          # Opens the file in read mode
     temp = []
-    counter = 0
+    counter = 0                                                                                     # The counter is used to keep track of the column number
     for line in file:
+        # Only appends column number if the code specifies a column number should be addded
         if columnNums:
-            x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)] + [str(counter)]
+            x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)] + [str(counter)] # This splits the line and so that the values are sperate
         else:
             x = [i.strip(',').strip('"').strip('\n') for i in re.findall('[^",]*[,\n]|".*"[,\n]', line)]
         temp.append(x)
@@ -107,16 +115,32 @@ def toList(file,columnNums=True):
     file.close()
     return temp
 
-
+'''
+Takes the column name and coverts it too a column number based on the name of the column in data
+'''
 def nameToColumn(data, name):
-    for i in data[0]:
+    for i in data[0]:                                                                               # Iterates through the header of data
         if i.lower() == name.lower():
-            return data[0].index(i)
-    raise AttributeError(f"{name} is not a valid column")
+            return data[0].index(i)                                                                 # Returns the number of the column
+    raise AttributeError(f"{name} is not a valid column")                                           # Raises and error if the user enters an invalid column
 
+
+'''
+Take a
+List of data
+number of a column
+the comparator that should be used
+what that column should be compared to
+and it returns the data with only the values that pass the test
+'''
 def compare(data, columnNum, val, comparitor):
     temp = []
-    if comparitor == "=":
+    '''
+    The program itself is simple, it just checks what the comparator is and then compares the data with that comparator
+    If the comparator is = or != the data is lowered and if it is < or > the program attemps to convert the data to ints
+    it returns and error if the users data can be converted to an int
+    '''
+    if comparitor == "=":                                                                           # Evaluates the comparitor
         for i in data:
             if i[columnNum].lower() == val.lower():
                 temp.append(i)
@@ -142,7 +166,7 @@ def compare(data, columnNum, val, comparitor):
                 temp.append(i)
         return temp  
     else:
-        raise AttributeError
+        raise AttributeError(f"{comparitor} is not a valid comparitor\n use either =, !=, <, or >")
 
 
 '''
@@ -153,24 +177,48 @@ filename, column1value, column2, value and so on
 If the value for a column contains spaces you must surround it in double quotes
 
 '''
-def APPEND(statement):
-    inputString = re.findall('[^," ]+|".+"', statement)                                              # Splits the statement into parts
+def APPqs3END(statement):
+    inputString = re.findall('[^," ]+|".+"', statement)                                             # Splits the statement into parts
     inputString = [i.strip('"') for i in inputString]
-    file = open(inputString[0], 'a')
+    file = open(inputString[0], 'a')                                                                # Opens the file in append mode
     temp = ""
+    '''
+    This next block of code converts the data into csv format
+    '''
     for i in inputString[1:]:
         if " " in i:
             temp += ',"'+i+'"'
         else:
             temp += ","+i
-    temp = temp[1:] +'\n'
+    temp = temp[1:] +'\n'                                                                           # Remove the first comma and adds a new line with the escape character
     file.write(temp)
     file.close()
 
 
-
-def DELETE():
-    pass
+'''
+Input format:
+Line filepath
+Deletes a line from a CSV file
+'''
+def DELETE(statement):
+    inputString = re.findall('[^," ]+|".+"', statement)                                              # Splits the statement into parts
+    inputString = [i.strip('"') for i in inputString]
+    data = toList(inputString[1], columnNums=False)
+    line = int(inputString[0])
+    data.pop(line)
+    temp2 = ""
+    for i in data:
+        temp = ""
+        for j in i:
+            if " " in j:
+                temp += ',"'+j+'"'
+            else:
+                temp += ","+j
+        temp = temp[1:] +'\n'
+        temp2+=temp
+    file = open(inputString[1], 'w')
+    file.write(temp2)
+    file.close
 
 '''
 Input format:
