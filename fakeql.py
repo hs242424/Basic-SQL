@@ -139,12 +139,13 @@ def compare(data, columnNum, val, comparitor):
     The program itself is simple, it just checks what the comparator is and then compares the data with that comparator
     If the comparator is = or != the data is lowered and if it is < or > the program attemps to convert the data to ints
     it returns and error if the users data can be converted to an int
+    I only documented only the first evaluation because the rest are the same except for the try except which is used if the < or > is used and the values can't be converted to a string
     '''
     if comparitor == "=":                                                                           # Evaluates the comparitor
         for i in data:
-            if i[columnNum].lower() == val.lower():
-                temp.append(i)
-        return temp       
+            if i[columnNum].lower() == val.lower():                                                 # Evaluates the value
+                temp.append(i)                                                                      # Appends to the output list if the comparitor is true
+        return temp                                                                                 # Returns only the data that fit the conditions
     elif comparitor == ">":
         for i in data:
             try:
@@ -177,21 +178,21 @@ filename, column1value, column2, value and so on
 If the value for a column contains spaces you must surround it in double quotes
 
 '''
-def APPqs3END(statement):
+def APPEND(statement):
     inputString = re.findall('[^," ]+|".+"', statement)                                             # Splits the statement into parts
     inputString = [i.strip('"') for i in inputString]
     file = open(inputString[0], 'a')                                                                # Opens the file in append mode
-    temp = ""
+    temp = ""                                                                                       # Creates a temp variable to store the string to be appened to the csv
     '''
     This next block of code converts the data into csv format
     '''
-    for i in inputString[1:]:
-        if " " in i:
-            temp += ',"'+i+'"'
-        else:
+    for i in inputString[1:]:                                                                       # Iterats through the user input excluding the filepath
+        if " " in i:                                                                                # If the user inout contains a space it adds double quotes around the input before it adds it to temp
+            temp += ',"'+i+'"'                                                                      # A comma is always added before the string is added
+        else:                                                                                       # The else statement deals with values that don't include spaces
             temp += ","+i
     temp = temp[1:] +'\n'                                                                           # Remove the first comma and adds a new line with the escape character
-    file.write(temp)
+    file.write(temp)                                                                                # Appends the line to the end of the file and closes the file
     file.close()
 
 
@@ -201,9 +202,9 @@ Line filepath
 Deletes a line from a CSV file
 '''
 def DELETE(statement):
-    inputString = re.findall('[^," ]+|".+"', statement)                                              # Splits the statement into parts
+    inputString = re.findall('[^," ]+|".+"', statement)                                             # Splits the statement into parts
     inputString = [i.strip('"') for i in inputString]
-    data = toList(inputString[1], columnNums=False)
+    data = toList(inputString[1], columnNums=False)                                                 # Converts 
     line = int(inputString[0])
     data.pop(line)
     temp2 = ""
