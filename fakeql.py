@@ -16,7 +16,7 @@ import re
 Select is the primary function and is one of the two functions intended to be used by the user
 The statement that is intended to be inputed into the functions is as follows
 
-Note Well: in an argument in you statement has spaces surround it in double quotes
+Note Well: if an argument in you statement has spaces surround it in double quotes
 
 'column1, column2 FROM filepath WHERE column operator value'
 
