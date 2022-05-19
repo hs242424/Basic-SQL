@@ -204,34 +204,39 @@ Deletes a line from a CSV file
 def DELETE(statement):
     inputString = re.findall('[^," ]+|".+"', statement)                                             # Splits the statement into parts
     inputString = [i.strip('"') for i in inputString]
-    data = toList(inputString[1], columnNums=False)                                                 # Converts 
-    line = int(inputString[0])
-    data.pop(line)
-    temp2 = ""
-    for i in data:
-        temp = ""
-        for j in i:
-            if " " in j:
+    data = toList(inputString[1], columnNums=False)                                                 # Converts data to a list
+    line = int(inputString[0])                                                                      # Parses line from input string
+    data.pop(line)                                                                                  # Removes the line from the data list
+    temp2 = ""                                                                                      # Creates a temp variable for converting the list to CSV format(I know I should have made this its own function but I just copy and pasted it)
+    'Converts the data to a csv format by iterating through the string, creating each line and then appending to a final string to be written to the CSV'
+    for i in data:                                                                                  # Iterates through the data
+        temp = ""                                                                                   # Temp variable stores each line for each iteration
+        for j in i:                                                                                 # Iterates through each item in the line
+            if " " in j:                                                                            # Uses quotes if the item has a space in it
                 temp += ',"'+j+'"'
             else:
                 temp += ","+j
-        temp = temp[1:] +'\n'
-        temp2+=temp
-    file = open(inputString[1], 'w')
+        temp = temp[1:] +'\n'                                                                       # Removes the first comma and adds a new line character before appending
+        temp2+=temp                                                                                 # Adds the temp string to the final output string
+    file = open(inputString[1], 'w')                                                                # Writes the string in correct format to the csv
     file.write(temp2)
-    file.close
+    file.close()                                                                                    # Closes the file after writing
 
 '''
 Input format:
 line, column, filepath, value
 '''
 def UPDATE(statement):
-    inputString = re.findall('[^," ]+|".+"', statement)                                              # Splits the statement into parts
+    inputString = re.findall('[^," ]+|".+"', statement)                                             # Splits the statement into parts
     inputString = [i.strip('"') for i in inputString]
-    data = toList(inputString[2], columnNums=False)
-    line = int(inputString[0])
-    column = nameToColumn(data, inputString[1])
-    data[line][column] = inputString[3]
+    data = toList(inputString[2], columnNums=False)                                                 # Converts the CSV to list
+    line = int(inputString[0])                                                                      # Parses line from string
+    column = nameToColumn(data, inputString[1])                                                     # finds the number of the column for the column the user specified
+    data[line][column] = inputString[3]                                                             # Changes the data in the place the user specified to the value the user wanted
+    """
+    Same List to CSV convertion as in the DELETE functions
+    Again, I relize in hindsight that I should have made this a function
+    """
     temp2 = ""
     for i in data:
         temp = ""
