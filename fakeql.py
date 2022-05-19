@@ -3,6 +3,10 @@ Header:
 Author: Harrison Servedio
 Version: 1.0
 Discription: A primitive recreation of SQL intended to be used with csv files
+Notes:
+    The CSV file must have a header with column names
+Issues:
+    Make consume a lot of memory for really big datasets
 '''
 
 import re
