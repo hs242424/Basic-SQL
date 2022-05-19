@@ -1,5 +1,4 @@
 import fakeql as fql
-
 # This is a demonstration on how the fakeql module is intended to be used
 
 
