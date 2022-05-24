@@ -62,7 +62,7 @@ def SELECT(statement):
     If the user doesn't want all of the columns the program finds the list index of the columns they want
     '''
     if columns != "All": 
-        columnNums = [nameToColumn(data, i) for i in columns]
+        columnNums = [nameToColumn(data, i) for i in columns]                                       # This line finds the number of columns the program has and makes a list that containes the numbers of all of the columns. This is needed because of the way the return data function works
     else:                                                                                           # If the user does want all of the columns the program create a list that has the index of every column
         columnNums = [i for i in range(len(data[0]))]
     
@@ -75,13 +75,14 @@ def SELECT(statement):
         while True:                                                                                 # Repeastes until all condition have been evaluated
             try:                                                                                    # The try except is used to inform the user if they have entered incorrect data
                 # This next block of code finds the conditions and then evalutes them
-                brokenCondition = [inputString[i] for i in range(listPos, listPos+3)]
+                brokenCondition = [inputString[i] for i in range(listPos, listPos+3)]               # Breaks the condition into the column, comparator, and value
+                #
                 data2 = compare(data2, nameToColumn(data, brokenCondition[0]), brokenCondition[2], brokenCondition[1])
                 listPos += 4
                 if listPos > len(inputString):
                     break
             except:
-                raise AttributeError("Your comparisons are incorrect")
+                raise AttributeError("Your comparisons are incorrect")                              # raises an error if the comparisons are inputed incorrectly
             
         return returnData(data2, columnNums)                                                        # Return the final data
 
