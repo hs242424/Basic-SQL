@@ -1,8 +1,7 @@
 import fakeql as fql
 # This is a demonstration on how the fakeql module is intended to be used
 
-
-# x = fql.SELECT('survived, name FROM data.csv where sex = male')
+# x = fql.SELECT(f'name FROM data.csv where sex = male and survived = 1')
 # for i in x:
 #     print(i)
 
